@@ -5,24 +5,24 @@ from keras.preprocessing.text import Tokenizer
 import helper
 
 
-english_sentences = helper.load_data('data/small_vocab_en')
-french_sentences = helper.load_data('data/small_vocab_fr')
+english_sentences = helper.load_data('data/small_vocab_ch')
+french_sentences = helper.load_data('data/small_vocab_ru')
 print('Dataset Loaded')
 
 for sample_i in range(2):
- print('small_vocab_en Line {}: {}'.format(sample_i + 1, english_sentences[sample_i]))
- print('small_vocab_fr Line {}: {}'.format(sample_i + 1, french_sentences[sample_i]))
+ print('small_vocab_ch Line {}: {}'.format(sample_i + 1, english_sentences[sample_i]))
+ print('small_vocab_ru Line {}: {}'.format(sample_i + 1, french_sentences[sample_i]))
 
 english_words_counter = collections.Counter([word for sentence in english_sentences for word in sentence.split()])
 french_words_counter = collections.Counter([word for sentence in french_sentences for word in sentence.split()])
-print('{} English words.'.format(len([word for sentence in english_sentences for word in sentence.split()])))
-print('{} unique English words.'.format(len(english_words_counter)))
-print('10 Most common words in the English dataset:')
+print('{} chinese words.'.format(len([word for sentence in english_sentences for word in sentence.split()])))
+print('{} unique chinese words.'.format(len(english_words_counter)))
+print('10 Most common words in the chinese dataset:')
 print('"' + '" "'.join(list(zip(*english_words_counter.most_common(10)))[0]) + '"')
 print()
-print('{} French words.'.format(len([word for sentence in french_sentences for word in sentence.split()])))
-print('{} unique French words.'.format(len(french_words_counter)))
-print('10 Most common words in the French dataset:')
+print('{} russia words.'.format(len([word for sentence in french_sentences for word in sentence.split()])))
+print('{} unique russia words.'.format(len(french_words_counter)))
+print('10 Most common words in the russia dataset:')
 print('"' + '" "'.join(list(zip(*french_words_counter.most_common(10)))[0]) + '"')
 
 def tokenize(x):
@@ -30,9 +30,9 @@ def tokenize(x):
  x_tk.fit_on_texts(x)
  return x_tk.texts_to_sequences(x), x_tk
 text_sentences = [
- 'The quick brown fox jumps over the lazy dog .',
- 'By Jove , my quick study of lexicography won a prize .',
- 'This is a short sentence .']
+ '敏捷的棕色狐狸跳过懒惰的狗。',
+ '天啊，我对词汇学的快速研究赢得了一个奖项。',
+ '这是一个简短的句子。']
 text_tokenized, text_tokenizer = tokenize(text_sentences)
 print(text_tokenizer.word_index)
 print()
@@ -69,10 +69,10 @@ max_french_sequence_length = preproc_french_sentences.shape[1]
 english_vocab_size = len(english_tokenizer.word_index)
 french_vocab_size = len(french_tokenizer.word_index)
 print('Data Preprocessed')
-print("Max English sentence length:", max_english_sequence_length)
-print("Max French sentence length:", max_french_sequence_length)
-print("English vocabulary size:", english_vocab_size)
-print("French vocabulary size:", french_vocab_size)
+print("Max chinese sentence length:", max_english_sequence_length)
+print("Max russia sentence length:", max_french_sequence_length)
+print("chinese vocabulary size:", english_vocab_size)
+print("russia vocabulary size:", french_vocab_size)
 
 def logits_to_text(logits, tokenizer):
  index_to_words = {id: word for word, id in tokenizer.word_index.items()}
