@@ -12,26 +12,26 @@ from keras.models import Sequential
 import jieba
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
-os.environ["CUDA_VISIBLE_DEVICES"]="-1"
-english_sentences = helper.load_data2('data/small_vocab_ch')
-french_sentences = helper.load_data('data/small_vocab_ru')
+
+english_sentences = helper.load_data2('data/small_vocab_ch3')
+french_sentences = helper.load_data('data/small_vocab_ru3')
 print('Dataset Loaded')
 
 for sample_i in range(2):
     print('small_vocab_ch Line {}: {}'.format(sample_i + 1, english_sentences[sample_i]))
     print('small_vocab_ru Line {}: {}'.format(sample_i + 1, french_sentences[sample_i]))
 
-# english_words_counter = collections.Counter([word for sentence in english_sentences  for word in jieba.cut(sentence, cut_all=False)])
-# french_words_counter = collections.Counter([word for sentence in french_sentences for word in sentence.split()])
-# print('{} chinese words.'.format(len([word for sentence in english_sentences for word in jieba.cut(sentence, cut_all=False)])))
-# print('{} unique chinese words.'.format(len(english_words_counter)))
-# print('10 Most common words in the chinese dataset:')
-# print('"' + '" "'.join(list(zip(*english_words_counter.most_common(10)))[0]) + '"')
-# print()
-# print('{} russia words.'.format(len([word for sentence in french_sentences for word in sentence.split()])))
-# print('{} unique russia words.'.format(len(french_words_counter)))
-# print('10 Most common words in the russia dataset:')
-# print('"' + '" "'.join(list(zip(*french_words_counter.most_common(10)))[0]) + '"')
+english_words_counter = collections.Counter([word for sentence in english_sentences  for word in jieba.cut(sentence, cut_all=False)])
+french_words_counter = collections.Counter([word for sentence in french_sentences for word in sentence.split()])
+print('{} chinese words.'.format(len([word for sentence in english_sentences for word in jieba.cut(sentence, cut_all=False)])))
+print('{} unique chinese words.'.format(len(english_words_counter)))
+print('10 Most common words in the chinese dataset:')
+print('"' + '" "'.join(list(zip(*english_words_counter.most_common(10)))[0]) + '"')
+print()
+print('{} russia words.'.format(len([word for sentence in french_sentences for word in sentence.split()])))
+print('{} unique russia words.'.format(len(french_words_counter)))
+print('10 Most common words in the russia dataset:')
+print('"' + '" "'.join(list(zip(*french_words_counter.most_common(10)))[0]) + '"')
 # 对于中文
 def tokenizeZh(x):
     text_sentences2=[]
@@ -86,6 +86,8 @@ def preprocess(x, y):
 preproc_english_sentences, preproc_french_sentences, english_tokenizer, french_tokenizer = \
     preprocess(english_sentences, french_sentences)
 
+
+
 max_english_sequence_length = preproc_english_sentences.shape[1]
 max_french_sequence_length = preproc_french_sentences.shape[1]
 english_vocab_size = len(english_tokenizer.word_index)
@@ -133,7 +135,8 @@ def final_predictions(x, y, x_tk, y_tk):
                         len(english_tokenizer.word_index) + 1,
                         len(french_tokenizer.word_index) + 1)
 
-    model.fit(tmp_X, preproc_french_sentences, batch_size=1024, epochs=17, validation_split=0.2)
+    model.fit(tmp_X, preproc_french_sentences, batch_size=1024, epochs=200, validation_split=0.2)
+    model.save('tr.h5')
 
     y_id_to_word = {value: key for key, value in y_tk.word_index.items()}
     y_id_to_word[0] = '<PAD>'
@@ -141,6 +144,7 @@ def final_predictions(x, y, x_tk, y_tk):
     sentence = [x_tk.word_index[word] for word in jieba.cut(sentence, cut_all=False)]
     sentence = pad_sequences([sentence], maxlen=x.shape[-1], padding='post')
     sentences = np.array([sentence[0], x[0]])
+
     predictions = model.predict(sentences, len(sentences))
     print('Sample 1:')
     print(' '.join([y_id_to_word[np.argmax(x)] for x in predictions[0]]))
@@ -148,6 +152,5 @@ def final_predictions(x, y, x_tk, y_tk):
     print('Sample 2:')
     print(' '.join([y_id_to_word[np.argmax(x)] for x in predictions[1]]))
     print(' '.join([y_id_to_word[np.max(x)] for x in y[0]]))
-
 
 final_predictions(preproc_english_sentences, preproc_french_sentences, english_tokenizer, french_tokenizer)
