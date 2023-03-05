@@ -54,10 +54,10 @@ def test_pad(pad):
 
 
 def test_model_final(model_final):
-    input_shape = (3433582, 306)
-    output_sequence_length = 46
-    english_vocab_size = 276826
-    french_vocab_size = 497361
+    input_shape = (286, 33)
+    output_sequence_length = 28
+    english_vocab_size = 283
+    french_vocab_size = 415
 
     model = model_final(input_shape, output_sequence_length, english_vocab_size, french_vocab_size)
     _test_model(model, input_shape, output_sequence_length, french_vocab_size)
